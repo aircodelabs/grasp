@@ -1,0 +1,61 @@
+{
+  "name": "grasp",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev:web": "vite",
+    "dev:server": "nodemon",
+    "dev": "concurrently -n server,client -c blue,green \"pnpm dev:server\" \"pnpm dev:web\"",
+    "build:web": "vite build",
+    "build": "pnpm build:web",
+    "start": "NODE_ENV=production node server/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.5.2",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@headlessui/react": "^2.2.1",
+    "@heroicons/react": "^2.2.0",
+    "@modelcontextprotocol/sdk": "^1.9.0",
+    "@tailwindcss/vite": "^4.1.4",
+    "axios": "^1.8.4",
+    "clsx": "^2.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "framer-motion": "^12.7.2",
+    "morgan": "^1.10.0",
+    "openai": "^4.93.0",
+    "playwright": "^1.51.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.5.0",
+    "sharp": "^0.34.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "uuid": "^11.1.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "nodemon": "^3.1.9",
+    "tailwindcss": "^4.1.4",
+    "vite": "^6.2.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

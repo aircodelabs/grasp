@@ -1,0 +1,5 @@
+{
+  "watch": ["server", "browser", "agent"],
+  "ext": "js,json",
+  "exec": "node server/index.js"
+}
