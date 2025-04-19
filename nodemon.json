@@ -1,5 +1,6 @@
 {
-  "watch": ["server", "browser", "agent"],
-  "ext": "js,json",
-  "exec": "node server/index.js"
+  "watch": ["server"],
+  "ext": ".ts",
+  "ignore": [],
+  "exec": "ts-node -r tsconfig-paths/register -P server/tsconfig.json server/api/index.ts"
 }

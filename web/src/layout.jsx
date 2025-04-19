@@ -100,7 +100,10 @@ export default function Layout() {
             <Dropdown>
               <DropdownButton as={SidebarItem} className="lg:mb-2.5">
                 <Avatar src="/grasp-logo.svg" className="dark:hidden" />
-                <img src="/grasp-logo-dark.svg" className="hidden dark:block" />
+                <img
+                  src="/grasp-logo-dark.svg"
+                  className="hidden dark:block h-5"
+                />
                 <SidebarLabel>Grasp</SidebarLabel>
                 <ChevronDownIcon />
               </DropdownButton>

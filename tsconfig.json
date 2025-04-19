@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "composite": true
+  },
+  "references": [{ "path": "./web" }, { "path": "./server" }],
+  "files": [],
+  "exclude": ["node_modules"]
+}
