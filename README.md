@@ -1,4 +1,4 @@
-![grasp-banner](https://github.com/user-attachments/assets/a07cd9c9-6b33-4b55-bdf1-81cc8bfb7d96)
+![banner](https://github.com/user-attachments/assets/c146bd65-2b62-4446-a8ea-6761862c1a89)
 
 <h1 align="center">Grasp</h1>
 
@@ -10,7 +10,9 @@ Some of the key features include:
 - **Human-like automation**. Grasp operates the browser just like a real human. You can even provide credentials for the agent to log in and retrieve personalized content.
 - **Natural language control**. No code needed — simply describe what you want in plain language, and the agent will handle the rest.
 
-https://github.com/user-attachments/assets/aaf14b00-8aff-44ad-a8c4-46f0b85b4e92
+
+https://github.com/user-attachments/assets/b55b5f76-4faa-45b9-a5ab-4c4295dfdf19
+
 
 ## Quick Start
 
