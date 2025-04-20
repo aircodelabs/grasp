@@ -55,4 +55,4 @@ We’d love to hear from you。
 
 ## License
 
-Licensed under the the Apache-2.0 license.
+Licensed under the the BSL-1.1 license.
