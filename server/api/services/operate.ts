@@ -1,4 +1,4 @@
-import { getBrowser } from "@server/browser/index";
+import { getBrowser } from "@server/browser/vision/index";
 import { handle } from "@server/agent/anthropic/index";
 import { generateTransactionId, addLog } from "@server/utils/logs";
 

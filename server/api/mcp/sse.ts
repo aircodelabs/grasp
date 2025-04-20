@@ -1,15 +1,8 @@
 import express from "express";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import cors from "cors";
 import mcpServer from "./mcp-server";
 
 const router = express.Router();
-// router.use(
-//   cors({
-//     origin: ["http://localhost:6274", "http://127.0.0.1:6274"],
-//   })
-// );
-router.use(cors());
 
 // to support multiple simultaneous connections we have a lookup object from
 // sessionId to transport

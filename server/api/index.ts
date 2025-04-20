@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import { router as webRouter, ioRegister as webIoRegister } from "./web/api";
 import frontendRegister from "./web/frontend";
 import mcpRouter from "./mcp";
+import { agentCard, a2aRouter } from "./a2a";
 import morgan from "morgan";
 const app = express();
 const server = createServer(app);
@@ -16,11 +17,17 @@ const io = new Server(server);
 app.use(morgan("tiny"));
 app.use(express.json());
 
+// Host the agent card under well-known
+app.get("/.well-known/agent.json", (req, res) => {
+  res.json(agentCard);
+});
+
 // Register each server
 app.use("/api/web", webRouter);
 webIoRegister(io.of("/web"));
 
 app.use("/api/mcp", mcpRouter);
+app.use("/api/a2a", a2aRouter);
 
 // Serve frontend. this must be the last routing middleware
 if (process.env.NODE_ENV === "production") {
