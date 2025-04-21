@@ -1,11 +1,6 @@
-import {
-  chromium,
-  Browser as PlaywrightBrowser,
-  BrowserContext,
-  Page,
-  Response,
-} from "playwright";
+import * as playwright from "playwright";
 import sharp from "sharp";
+import yaml from "yaml";
 import {
   generateHumanMousePath,
   getMouseClickDelay,
@@ -18,6 +13,7 @@ import {
   getHumanKeypressSequence,
 } from "./humanKeyboard";
 import { sleep } from "@server/utils/helpers";
+import { Page } from "playwright";
 
 export interface Position {
   x: number;
@@ -29,7 +25,7 @@ export interface Dimensions {
   height: number;
 }
 
-export interface Tab {
+export interface TabInfo {
   index: number;
   title: string;
   url: string;
@@ -67,17 +63,110 @@ const CUA_KEY_TO_PLAYWRIGHT_KEY: Record<string, string> = {
   return: "Enter",
 };
 
+// The root page or child iframe
+type PageOrFrame = playwright.Page | playwright.FrameLocator;
+
+class Snapshot {
+  private frameStack: PageOrFrame[] = [];
+  private ymlContent: string = "";
+
+  constructor() {}
+
+  static async create(page: playwright.Page): Promise<Snapshot> {
+    const snapshot = new Snapshot();
+    await snapshot.buildSnapshot(page);
+    return snapshot;
+  }
+
+  getYmlContent(): string {
+    return this.ymlContent;
+  }
+
+  findLocatorByRef(ref: string): playwright.Locator | null {
+    if (this.frameStack.length === 0) {
+      return null;
+    }
+    // Get the root page
+    let frame = this.frameStack[0];
+    const match = ref.match(/^f(\d+)(.*)/);
+    if (match) {
+      const index = parseInt(match[1], 10);
+      frame = this.frameStack[index];
+      ref = match[2];
+    }
+    return frame.locator(ref);
+  }
+
+  private async buildSnapshot(page: playwright.Page): Promise<void> {
+    const ymlDoc = await this.__snapshotPageOrFrame(page);
+    this.ymlContent = ymlDoc.toString({ indentSeq: false }).trim();
+  }
+
+  private async __snapshotPageOrFrame(
+    pageOrFrame: playwright.Page | playwright.FrameLocator
+  ) {
+    // Push the frame to the stack
+    const frameIndex = this.frameStack.push(pageOrFrame) - 1;
+    const snapshotString = await pageOrFrame
+      .locator("body")
+      .ariaSnapshot({ ref: true });
+    const snapshot = yaml.parseDocument(snapshotString);
+
+    // Take care of the iframes
+    const visit = async (node: any): Promise<unknown> => {
+      if (yaml.isPair(node)) {
+        await Promise.all([
+          visit(node.key).then((key) => (node.key = key)),
+          visit(node.value).then((value) => (node.value = value)),
+        ]);
+      } else if (yaml.isSeq(node) || yaml.isMap(node)) {
+        node.items = await Promise.all(node.items.map(visit));
+      } else if (yaml.isScalar(node)) {
+        if (typeof node.value === "string") {
+          const value = node.value;
+          if (frameIndex > 0) {
+            node.value = value.replace("[ref=", `[ref=f${frameIndex}]`);
+          }
+          if (value.startsWith("iframe")) {
+            const ref = value.match(/\[ref=(.*)\]/)?.[1];
+            if (ref) {
+              try {
+                const childSnapshot = await this.__snapshotPageOrFrame(
+                  pageOrFrame.frameLocator(`aria-ref=${ref}`)
+                );
+                return snapshot.createPair(node.value, childSnapshot);
+              } catch (error) {
+                return snapshot.createPair(
+                  node.value,
+                  "<could not take iframe snapshot>"
+                );
+              }
+            }
+          }
+        }
+      }
+
+      return node;
+    };
+
+    await visit(snapshot.contents);
+    return snapshot;
+  }
+}
+
 export class Browser {
   private dimensions: Dimensions;
-  private instance: BrowserContext | null;
-  private currentPage: Page | null;
+  private context: playwright.BrowserContext | null;
+  private currentPage: playwright.Page | null;
+  private currentPageSnapshot: Snapshot | null;
   private currentMousePosition: Position;
 
   constructor() {
     this.currentPage = null;
+    this.currentPageSnapshot = null;
     this.currentMousePosition = { x: 0, y: 0 };
     this.dimensions = { width: 1024, height: 768 };
-    this.instance = null;
+    this.context = null;
   }
 
   getDimensions(): Dimensions {
@@ -90,20 +179,20 @@ export class Browser {
       height: 768,
     };
 
-    const browser: PlaywrightBrowser = await chromium.launch({
+    const browser: playwright.Browser = await playwright.chromium.launch({
       args: [
         `--window-size=${this.dimensions.width},${this.dimensions.height}`,
         "--disable-extensions",
         "--disable-file-system",
       ],
     });
-    this.instance = await browser.newContext({
+    this.context = await browser.newContext({
       viewport: {
         width: this.dimensions.width,
         height: this.dimensions.height,
       },
     });
-    this.instance.on("page", (p) => this.__handlePageCreated(p));
+    this.context.on("page", (p) => this.__handlePageCreated(p));
     await this.newTab("https://bing.com");
     this.currentMousePosition = {
       x: 0,
@@ -112,12 +201,12 @@ export class Browser {
   }
 
   /** Navigate the browser */
-  async tabs(): Promise<Tab[]> {
-    if (!this.instance) {
+  async tabs(): Promise<TabInfo[]> {
+    if (!this.context) {
       throw new Error("Browser not initialized");
     }
-    const pages = this.instance.pages();
-    const tabs: Tab[] = [];
+    const pages = this.context.pages();
+    const tabs: TabInfo[] = [];
     for (let index = 0; index < pages.length; index++) {
       const page = pages[index];
       const title = await page.title();
@@ -131,11 +220,11 @@ export class Browser {
     return tabs;
   }
 
-  async currentTab(): Promise<Tab | null> {
-    if (!this.instance || !this.currentPage) {
+  async currentTab(): Promise<TabInfo | null> {
+    if (!this.context || !this.currentPage) {
       return null;
     }
-    const pages = this.instance.pages();
+    const pages = this.context.pages();
     const index = pages.indexOf(this.currentPage);
     const title = await this.currentPage.title();
     const url = this.currentPage.url();
@@ -143,18 +232,18 @@ export class Browser {
   }
 
   async newTab(url: string): Promise<void> {
-    if (!this.instance) {
+    if (!this.context) {
       throw new Error("Browser not initialized");
     }
-    const page = await this.instance.newPage();
+    const page = await this.context.newPage();
     await page.goto(url, { waitUntil: "domcontentloaded" });
   }
 
   async switchToTab(index: number): Promise<void> {
-    if (!this.instance) {
+    if (!this.context) {
       throw new Error("Browser not initialized");
     }
-    const pages = this.instance.pages();
+    const pages = this.context.pages();
     if (index < 0 || index >= pages.length) {
       throw new Error(`Invalid tab index: ${index}`);
     }
@@ -165,7 +254,7 @@ export class Browser {
     await this.currentPage?.goto(url, { waitUntil: "domcontentloaded" });
   }
 
-  async back(): Promise<null | Response> {
+  async back(): Promise<null | playwright.Response> {
     return this.currentPage ? await this.currentPage.goBack() : null;
   }
 
@@ -177,7 +266,7 @@ export class Browser {
     await this.currentPage?.reload();
   }
 
-  /** Operate the current page */
+  // Take a screenshot of the current page
   async screenshot(format: "buffer"): Promise<Buffer>;
   async screenshot(format?: "base64"): Promise<string>;
   async screenshot(
@@ -206,6 +295,18 @@ export class Browser {
       : combinedImage.toString("base64");
   }
 
+  // Take a snapshot of the current page in YAML format, including the child iframes
+  async snapshot(): Promise<string> {
+    if (!this.currentPage) {
+      return "";
+    }
+    if (!this.currentPageSnapshot) {
+      this.currentPageSnapshot = await Snapshot.create(this.currentPage);
+    }
+    return this.currentPageSnapshot.getYmlContent();
+  }
+
+  // Operate by coordinates
   async mouseDown(button: MouseButton = "left"): Promise<void> {
     if (!this.currentPage) return;
     await this.currentPage.mouse.down({
@@ -333,16 +434,95 @@ export class Browser {
     };
   }
 
+  // Operate by locator ref
+  async clickByRef(
+    ref: string,
+    button: MouseButton = "left",
+    count: number = 1
+  ): Promise<void> {
+    const locator = this.currentPageSnapshot?.findLocatorByRef(ref);
+    if (!locator) {
+      throw new Error(`Locator not found: ${ref}`);
+    }
+    await this.__moveToLocator(locator);
+    const delay = getMouseClickDelay();
+    await locator.click({
+      button,
+      delay,
+      clickCount: count,
+    });
+  }
+
+  async dragByRef(startRef: string, endRef: string): Promise<void> {
+    const startLocator = this.currentPageSnapshot?.findLocatorByRef(startRef);
+    const endLocator = this.currentPageSnapshot?.findLocatorByRef(endRef);
+    if (!startLocator || !endLocator) {
+      throw new Error("Locator not found");
+    }
+    await this.__moveToLocator(startLocator);
+    const delay = getMouseClickDelay();
+    await sleep(delay);
+    await startLocator.dragTo(endLocator);
+  }
+
+  async hoverByRef(ref: string): Promise<void> {
+    const locator = this.currentPageSnapshot?.findLocatorByRef(ref);
+    if (!locator) {
+      throw new Error("Locator not found");
+    }
+    await this.__moveToLocator(locator);
+    await locator.hover();
+  }
+
+  async typeByRef(ref: string, text: string): Promise<void> {
+    const locator = this.currentPageSnapshot?.findLocatorByRef(ref);
+    if (!locator) {
+      throw new Error("Locator not found");
+    }
+    await this.__moveToLocator(locator);
+    const sequence = getHumanTypingSequence(text);
+    for (const { char, delay, action } of sequence) {
+      if (action === "type") {
+        await locator.pressSequentially(char);
+      } else if (action === "press") {
+        await locator.press(char);
+      }
+      await sleep(delay);
+    }
+  }
+
+  async selectOptionByRef(ref: string, values: string[]): Promise<void> {
+    const locator = this.currentPageSnapshot?.findLocatorByRef(ref);
+    if (!locator) {
+      throw new Error("Locator not found");
+    }
+    await this.__moveToLocator(locator);
+    const delay = getMouseClickDelay();
+    await sleep(delay);
+    await locator.selectOption(values);
+  }
+
   /** Private methods */
+  private async __moveToLocator(locator: playwright.Locator): Promise<void> {
+    // First, we make sure the element is in the viewport
+    await locator.scrollIntoViewIfNeeded();
+    // Then, we move the mouse to the center of the element
+    const box = await locator.boundingBox();
+    if (!box) {
+      throw new Error("Element is not visible");
+    }
+    await this.move(box.x + box.width / 2, box.y + box.height / 2);
+  }
+
   private __handlePageCreated(page: Page): void {
     this.currentPage = page;
     page.on("close", () => this.__handlePageClosed(page));
   }
 
   private async __handlePageClosed(page: Page): Promise<void> {
-    if (!this.instance) return;
+    if (!this.context) return;
     if (page && page === this.currentPage) {
-      const pages = this.instance.pages();
+      const pages = this.context.pages();
       if (pages.length === 0) {
         // Create a new tab
         await this.newTab("https://www.google.com");
