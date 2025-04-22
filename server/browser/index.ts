@@ -12,7 +12,7 @@ import {
   getKeyboardPressDelay,
   getHumanKeypressSequence,
 } from "./humanKeyboard";
-import { sleep } from "@server/utils/helpers";
+import { sleep } from "../utils/helpers";
 import { Page } from "playwright";
 
 export interface Position {

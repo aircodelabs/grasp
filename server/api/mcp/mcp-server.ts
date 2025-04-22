@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { operate } from "@server/api/services/operate";
+import { operate } from "../services/operate";
 
 const mcpServer = new McpServer({
   name: "browser-using-server",

@@ -1,5 +1,5 @@
-import { sleep } from "@server/utils/helpers";
-import { Browser } from "@server/browser/index";
+import { sleep } from "../../utils/helpers";
+import { Browser } from "../../browser/index";
 import { Tool, AnthropicToolDefinition } from "./types";
 
 const ACTION_KEYS = {

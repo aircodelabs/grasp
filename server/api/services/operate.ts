@@ -1,6 +1,6 @@
-import { getBrowser } from "@server/browser/index";
-import { handle } from "@server/agent/anthropic/index";
-import { generateTransactionId, addLog } from "@server/utils/logs";
+import { getBrowser } from "../../browser/index";
+import { handle } from "../../agent/anthropic/index";
+import { generateTransactionId, addLog } from "../../utils/logs";
 
 export async function operate(task: string) {
   const browser = await getBrowser();

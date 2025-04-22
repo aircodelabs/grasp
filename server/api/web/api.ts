@@ -3,13 +3,13 @@
  */
 import express from "express";
 import { Namespace } from "socket.io";
-import { operate } from "@server/api/services/operate";
-import { getScreenshot } from "@server/api/services/browser";
+import { operate } from "../services/operate";
+import { getScreenshot } from "../services/browser";
 import {
   registerLogListener,
   unregisterLogListener,
   LogListener,
-} from "@server/utils/logs";
+} from "../../utils/logs";
 
 /** HTTP API */
 export const router = express.Router();

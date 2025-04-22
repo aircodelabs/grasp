@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
-import socket from "@web/utils/socket";
+import socket from "../../utils/socket";
 import { LivePreview } from "./live-preview";
-import { Subheading } from "@web/components/heading";
-import { Text, Strong } from "@web/components/text";
+import { Subheading } from "../../components/heading";
+import { Text, Strong } from "../../components/text";
 
 interface Block {
   type: string;

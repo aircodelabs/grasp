@@ -1,6 +1,6 @@
 {
   "watch": ["server"],
-  "ext": ".ts",
+  "ext": "ts",
   "ignore": [],
-  "exec": "ts-node -r tsconfig-paths/register -P server/tsconfig.json server/api/index.ts"
+  "exec": "ts-node --esm -P tsconfig.node.json server/api/index.ts"
 }

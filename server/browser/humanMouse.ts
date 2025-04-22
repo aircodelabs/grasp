@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import { randomInRange } from "@server/utils/helpers";
+import { randomInRange } from "../utils/helpers";
 
 interface Point {
   x: number;

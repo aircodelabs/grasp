@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import socket from "@web/utils/socket";
+import socket from "../../utils/socket";
 
 export function LivePreview() {
   const [src, setSrc] = useState("");

@@ -1,4 +1,4 @@
-import { operate } from "@server/api/services/operate";
+import { operate } from "../services/operate";
 import * as schema from "./schema";
 
 /**

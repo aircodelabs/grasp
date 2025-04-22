@@ -1,8 +1,7 @@
 {
-  "compilerOptions": {
-    "composite": true
-  },
-  "references": [{ "path": "./web" }, { "path": "./server" }],
   "files": [],
-  "exclude": ["node_modules"]
+  "references": [
+    { "path": "./tsconfig.web.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }
