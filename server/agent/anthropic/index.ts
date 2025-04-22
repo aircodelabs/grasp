@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import browserUse from "./browser-use";
 import browserNavigate from "./browser-navigate";
-import { Browser } from "@server/browser/vision/index";
+import { Browser } from "@server/browser/index";
 import { AnthropicMessage, ToolExecutionResult } from "./types";
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
