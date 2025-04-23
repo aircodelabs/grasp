@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import browserUse from "./browser-use";
 import browserNavigate from "./browser-navigate";
+import batchTool from "./batch-tool";
 import { Browser } from "../../browser/index";
 import { AnthropicMessage, ToolExecutionResult } from "./types";
 
@@ -44,7 +45,14 @@ To reduce cost, previous screenshot images have been removed from the conversati
     },
   ];
 
-  const tools = [browserUse(browser), browserNavigate(browser)];
+  const browserUseTool = browserUse(browser);
+  const browserNavigateTool = browserNavigate(browser);
+
+  const tools = [
+    browserUseTool,
+    browserNavigateTool,
+    batchTool(browser, [browserUseTool, browserNavigateTool]),
+  ];
 
   const result = await loop(system, tools, messages, onNewMessage);
   return result;
@@ -90,7 +98,7 @@ async function loop(
     tools: tools.map((tool) => tool.definition),
     system: system,
     messages,
-    betas: ["computer-use-2025-01-24"],
+    betas: ["computer-use-2025-01-24", "token-efficient-tools-2025-02-19"],
     thinking: { type: "enabled", budget_tokens: 1024 },
   });
   // Add it to the message history

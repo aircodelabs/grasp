@@ -1,7 +1,6 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { sleep } from "../../utils/helpers";
 import { Browser } from "../../browser/index";
-import { Tool } from "./types";
+import { Tool, AnthropicToolDefinition } from "./types";
 const ACTION_KEYS = {
   TABS: "tabs",
   CURRENT_TAB: "current_tab",
@@ -13,7 +12,7 @@ const ACTION_KEYS = {
   REFRESH: "refresh",
 };
 
-const definition: Anthropic.Beta.Messages.BetaToolUnion = {
+const definition: AnthropicToolDefinition = {
   name: "browser_navigate",
   description: "Navigate the browser",
   input_schema: {
