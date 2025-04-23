@@ -8,7 +8,7 @@
     "dev:server": "tsx watch ./server/api/index.ts",
     "dev": "concurrently -n server,client -c blue,green \"pnpm dev:server\" \"pnpm dev:web\"",
     "build:web": "vite build web",
-    "build:server": "tsc -p server",
+    "build:server": "tsc -p tsconfig.node.json",
     "build": "pnpm build:web && pnpm build:server",
     "start": "NODE_ENV=production node server/dist/api/index.js",
     "type-check": "tsc --build",
