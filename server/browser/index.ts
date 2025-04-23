@@ -12,8 +12,9 @@ import {
   getKeyboardPressDelay,
   getHumanKeypressSequence,
 } from "./humanKeyboard";
-import { sleep } from "../utils/helpers";
+import { ensureDir, sleep } from "../utils/helpers";
 import { Page } from "playwright";
+import path from "path";
 
 export interface Position {
   x: number;
@@ -179,19 +180,30 @@ export class Browser {
       height: 768,
     };
 
-    const browser: playwright.Browser = await playwright.chromium.launch({
-      args: [
-        `--window-size=${this.dimensions.width},${this.dimensions.height}`,
-        "--disable-extensions",
-        "--disable-file-system",
-      ],
-    });
-    this.context = await browser.newContext({
-      viewport: {
-        width: this.dimensions.width,
-        height: this.dimensions.height,
-      },
-    });
+    const userDataBase =
+      process.env.NODE_ENV === "production"
+        ? "/"
+        : path.join(process.cwd(), ".grasp-local");
+    const userDataDir = path.join(
+      userDataBase,
+      process.env.PLAYWRIGHT_USER_DATA_DIR || "/browser-user-data"
+    );
+    await ensureDir(userDataDir);
+
+    this.context = await playwright.chromium.launchPersistentContext(
+      userDataDir,
+      {
+        args: [
+          `--window-size=${this.dimensions.width},${this.dimensions.height}`,
+          "--disable-extensions",
+          "--disable-file-system",
+        ],
+        viewport: {
+          width: this.dimensions.width,
+          height: this.dimensions.height,
+        },
+      }
+    );
     this.context.on("page", (p) => this.__handlePageCreated(p));
     await this.newTab("https://bing.com");
     this.currentMousePosition = {
