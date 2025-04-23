@@ -1,8 +1,8 @@
-![banner](https://github.com/user-attachments/assets/c146bd65-2b62-4446-a8ea-6761862c1a89)
+![banner](https://github.com/user-attachments/assets/6314baa8-4b90-4b0d-ad85-0ef673e2ceca)
 
 <h1 align="center">Grasp</h1>
 
-Grasp is an open-source and self-hosted browser using agent. With built-in support for MCP and A2A support, it can seamlessly integrate with any other AI apps or agents.
+Grasp is an open-source and self-hosted agentic browser. With built-in support for MCP and A2A support, it can seamlessly integrate with any other AI apps or agents.
 
 Some of the key features include:
 
