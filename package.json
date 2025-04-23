@@ -8,7 +8,7 @@
     "dev:server": "tsx watch ./server/api/index.ts",
     "dev": "concurrently -n server,client -c blue,green \"pnpm dev:server\" \"pnpm dev:web\"",
     "build:web": "vite build web",
-    "build:server": "tsc -p server && tsc-alias -p server/tsconfig.json",
+    "build:server": "tsc -p server",
     "build": "pnpm build:web && pnpm build:server",
     "start": "NODE_ENV=production node server/dist/api/index.js",
     "type-check": "tsc --build",
@@ -20,12 +20,9 @@
   "license": "BSL-1.1",
   "packageManager": "pnpm@10.5.2",
   "dependencies": {
-    "@ai-sdk/anthropic": "^1.2.10",
-    "@ai-sdk/openai": "^1.3.16",
     "@anthropic-ai/sdk": "^0.39.0",
     "@headlessui/react": "^2.2.1",
     "@heroicons/react": "^2.2.0",
-    "@mastra/core": "^0.8.3",
     "@modelcontextprotocol/sdk": "^1.9.0",
     "@tailwindcss/vite": "^4.1.4",
     "axios": "^1.8.4",
@@ -43,7 +40,6 @@
     "sharp": "^0.34.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "ts-node": "^10.9.2",
     "uuid": "^11.1.0",
     "yaml": "^2.7.1",
     "zod": "^3.24.2"
@@ -65,13 +61,10 @@
     "globals": "^15.15.0",
     "nodemon": "^3.1.9",
     "tailwindcss": "^4.1.4",
-    "tsc-alias": "^1.8.15",
-    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.31.0",
-    "vite": "^6.2.0",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite": "^6.2.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
