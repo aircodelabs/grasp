@@ -112,7 +112,7 @@ export default function Test() {
   return (
     <div className="mx-auto flex w-full items-start gap-x-8" id="container">
       <aside className="hidden w-80 shrink-0 lg:flex flex-col gap-4">
-        <Subheading>Debug Task</Subheading>
+        {/* <Subheading>Debug Task</Subheading>
         <Textarea
           value={task}
           onChange={(e) => setTask(e.target.value)}
@@ -120,7 +120,7 @@ export default function Test() {
         />
         <Button onClick={handleSubmit} disabled={running}>
           {running ? "Running..." : "Submit"}
-        </Button>
+        </Button> */}
         <Subheading>Logs</Subheading>
         <div className="flow-root">
           <ul role="list" className="-mb-8">
