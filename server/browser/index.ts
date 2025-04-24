@@ -6,13 +6,13 @@ import {
   getMouseClickDelay,
   getMouseImage,
   MOUSE_IMAGE_RADIUS,
-} from "./humanMouse";
+} from "./humanMouse.js";
 import {
   getHumanTypingSequence,
   getKeyboardPressDelay,
   getHumanKeypressSequence,
-} from "./humanKeyboard";
-import { ensureDir, sleep } from "../utils/helpers";
+} from "./humanKeyboard.js";
+import { ensureDir, sleep } from "../utils/helpers.js";
 import { Page } from "playwright";
 import path from "path";
 

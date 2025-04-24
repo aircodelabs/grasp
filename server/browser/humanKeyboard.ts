@@ -1,4 +1,4 @@
-import { randomInRange } from "../utils/helpers";
+import { randomInRange } from "../utils/helpers.js";
 
 type KeyboardMap = {
   [key: string]: string;

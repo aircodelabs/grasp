@@ -1,9 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
-import browserUse from "./browser-use";
-import browserNavigate from "./browser-navigate";
-import batchTool from "./batch-tool";
-import { Browser } from "../../browser/index";
-import { AnthropicMessage, ToolExecutionResult } from "./types";
+import browserUse from "./browser-use.js";
+import browserNavigate from "./browser-navigate.js";
+import batchTool from "./batch-tool.js";
+import { Browser } from "../../browser/index.js";
+import { AnthropicMessage, ToolExecutionResult } from "./types.js";
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 

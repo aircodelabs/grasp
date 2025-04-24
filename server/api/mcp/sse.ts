@@ -1,6 +1,6 @@
 import express from "express";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import mcpServer from "./mcp-server";
+import mcpServer from "./mcp-server.js";
 
 const router = express.Router();
 

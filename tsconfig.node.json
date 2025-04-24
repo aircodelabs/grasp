@@ -8,6 +8,7 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
+    "esModuleInterop": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "outDir": "./server/dist",

@@ -3,10 +3,10 @@ import "dotenv/config";
 import express from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
-import { router as webRouter, ioRegister as webIoRegister } from "./web/api";
-import frontendRegister from "./web/frontend";
-import mcpRouter from "./mcp";
-import { agentCard, a2aRouter } from "./a2a";
+import { router as webRouter, ioRegister as webIoRegister } from "./web/api.js";
+import frontendRegister from "./web/frontend.js";
+import mcpRouter from "./mcp/index.js";
+import { agentCard, a2aRouter } from "./a2a/index.js";
 import morgan from "morgan";
 const app = express();
 const server = createServer(app);
@@ -70,6 +70,7 @@ process.on("unhandledRejection", (reason) => {
 });
 
 // Start the server
-server.listen(3000, () => {
-  console.log("Server is running on port 3000");
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

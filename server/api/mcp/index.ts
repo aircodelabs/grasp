@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import sseRouter from "./sse";
+import sseRouter from "./sse.js";
 
 const mcpRouter = express.Router();
 

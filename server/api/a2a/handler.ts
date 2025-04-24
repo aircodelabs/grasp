@@ -1,5 +1,5 @@
-import { operate } from "../services/operate";
-import * as schema from "./schema";
+import { operate } from "../services/operate.js";
+import * as schema from "./schema.js";
 
 /**
  * Context object provided to the TaskHandler.

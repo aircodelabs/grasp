@@ -1,6 +1,6 @@
-import { sleep } from "../../utils/helpers";
-import { Browser } from "../../browser/index";
-import { Tool, AnthropicToolDefinition } from "./types";
+import { sleep } from "../../utils/helpers.js";
+import { Browser } from "../../browser/index.js";
+import { Tool, AnthropicToolDefinition } from "./types.js";
 
 const ACTION_KEYS = {
   KEY: "key",

@@ -1,4 +1,4 @@
-import { getBrowser } from "../../browser/index";
+import { getBrowser } from "../../browser/index.js";
 
 export async function getScreenshot() {
   const browser = await getBrowser();

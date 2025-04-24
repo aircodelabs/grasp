@@ -1,4 +1,4 @@
-import * as schema from "./schema";
+import * as schema from "./schema.js";
 
 /**
  * Custom error class for A2A server operations, incorporating JSON-RPC error codes.

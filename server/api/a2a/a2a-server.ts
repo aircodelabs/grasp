@@ -4,17 +4,20 @@ import express, {
   NextFunction,
   RequestHandler,
 } from "express";
-import * as schema from "./schema";
+import * as schema from "./schema.js";
 // Import TaskAndHistory along with TaskStore implementations
-import store, { TaskStore, TaskAndHistory } from "./store";
+import store, { TaskStore, TaskAndHistory } from "./store.js";
 // Import TaskHandler and the original TaskContext to derive the new one
-import handler, { TaskHandler, TaskContext as OldTaskContext } from "./handler";
-import { A2AError } from "./error";
+import handler, {
+  TaskHandler,
+  TaskContext as OldTaskContext,
+} from "./handler.js";
+import { A2AError } from "./error.js";
 import {
   getCurrentTimestamp,
   isTaskStatusUpdate,
   isArtifactUpdate,
-} from "./utils";
+} from "./utils.js";
 
 // Define new TaskContext without the store, based on the original from handler.ts
 export interface TaskContext extends Omit<OldTaskContext, "taskStore"> {}

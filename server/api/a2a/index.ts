@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { AgentCard } from "./schema";
+import { AgentCard } from "./schema.js";
 
 const a2aRouter = express.Router();
 a2aRouter.use(cors());

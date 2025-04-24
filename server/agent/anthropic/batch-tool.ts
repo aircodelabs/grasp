@@ -1,5 +1,5 @@
-import { Browser } from "../../browser/index";
-import { AnthropicToolDefinition, Tool } from "./types";
+import { Browser } from "../../browser/index.js";
+import { AnthropicToolDefinition, Tool } from "./types.js";
 
 const definition: AnthropicToolDefinition = {
   name: "batch_tool",
