@@ -23,5 +23,5 @@ export async function operate(task: string) {
 
   const provider = (process.env.PROVIDER || "anthropic").toLowerCase();
   const text = await handle(provider, task, browser, onNewMessage);
-  return { responseText: text };
+  return text;
 }

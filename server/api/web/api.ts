@@ -16,7 +16,7 @@ export const router = express.Router();
 router.post("/operate", async (req, res) => {
   const { task } = req.body;
   const response = await operate(task);
-  res.json(response);
+  res.json({ responseText: response });
 });
 
 /** WebSocket API */
