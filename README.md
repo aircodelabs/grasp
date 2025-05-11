@@ -2,6 +2,11 @@
 
 <h1 align="center">Grasp</h1>
 
+<p align="center">
+  <a href="https://hub.docker.com/r/getgrasp/grasp"><img src="https://img.shields.io/github/actions/workflow/status/aircodelabs/grasp/docker-publish.yml?style=for-the-badge&logo=docker"></a>
+  <a href="https://discord.gg/XFqCA9VqWe"><img src="https://img.shields.io/badge/discord%20community-20B2AA?style=for-the-badge&logo=discord"></a>
+</p>
+
 Grasp is an open-source and self-hosted agentic browser. With built-in support for MCP and A2A support, it can seamlessly integrate with any other AI apps or agents.
 
 Some of the key features include:
