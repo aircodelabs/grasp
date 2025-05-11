@@ -1,9 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
+import type { BasicMessage } from "./types.js";
 
 export interface LogData {
   transactionId: string;
   logId: string;
-  message: any;
+  message: BasicMessage;
 }
 
 export type LogListener = (data: LogData) => void;
@@ -29,7 +30,7 @@ export function generateTransactionId(): string {
   return uuidv4();
 }
 
-export function addLog(transactionId: string, message: any): void {
+export function addLog(transactionId: string, message: BasicMessage): void {
   listeners.forEach((listener) => {
     listener({
       transactionId,

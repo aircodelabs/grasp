@@ -7,64 +7,47 @@ import { Subheading } from "../../components/heading";
 import { Text, Strong } from "../../components/text";
 import { Textarea } from "../../components/textarea";
 import { Button } from "../../components/button";
+import { BasicMessage } from "../../utils/types";
 
-interface Block {
-  type: string;
-  text?: string;
-  source?: {
-    data: string;
-  };
-  name?: string;
-  input?: unknown;
-  content?: Block[];
-}
-
-interface OneBlockProps {
-  block: Block;
-}
-
-function OneBlock({ block }: OneBlockProps) {
-  if (block.type === "text") {
-    return <Text>Text: {block.text}</Text>;
-  } else if (block.type === "image") {
-    return (
-      <img
-        className="w-full block"
-        src={`data:image/png;base64,${block.source?.data}`}
-        alt="Preview"
-      />
-    );
-  } else if (block.type === "tool_use") {
-    return (
-      <Text>
-        Tool use: {block.name} {JSON.stringify(block.input)}
-      </Text>
-    );
-  } else if (block.type === "tool_result") {
-    return (
-      <>
-        {block.content?.map((sb, index) => (
-          <OneBlock key={index} block={sb} />
-        ))}
-      </>
-    );
-  }
-  return null;
-}
-
-interface LogMessage {
-  role: string;
-  content: Block[];
+function MessageContent({ content }: { content: BasicMessage["content"] }) {
+  return content.map((part, idx) => {
+    if (part.type === "text") {
+      return <Text key={idx}>{part.text}</Text>;
+    }
+    if (part.type === "image") {
+      return (
+        <img
+          key={idx}
+          className="w-full block"
+          src={
+            part.dataType === "base64"
+              ? `data:${part.mimeType ?? "image/png"};base64,${part.data}`
+              : part.data
+          }
+        />
+      );
+    }
+    if (part.type === "tool_call") {
+      return (
+        <Text key={idx}>
+          Tool call: {part.toolName} {part.args}
+        </Text>
+      );
+    }
+    if (part.type === "tool_result") {
+      return <MessageContent content={part.content} />;
+    }
+  });
 }
 
 interface Log {
-  logId: string | number;
-  message: LogMessage;
+  logId: string;
+  message: BasicMessage;
 }
 
 export default function Test() {
   const [running, setRunning] = useState(false);
-  const [task, setTask] = useState("查询一下今天的天气");
+  const [task, setTask] = useState("使用 Google 查询一下今天的天气");
   const [logs, setLogs] = useState<Log[]>([]);
 
   useEffect(() => {
@@ -112,7 +95,7 @@ export default function Test() {
   return (
     <div className="mx-auto flex w-full items-start gap-x-8" id="container">
       <aside className="hidden w-80 shrink-0 lg:flex flex-col gap-4">
-        {/* <Subheading>Debug Task</Subheading>
+        <Subheading>Debug Task</Subheading>
         <Textarea
           value={task}
           onChange={(e) => setTask(e.target.value)}
@@ -120,7 +103,7 @@ export default function Test() {
         />
         <Button onClick={handleSubmit} disabled={running}>
           {running ? "Running..." : "Submit"}
-        </Button> */}
+        </Button>
         <Subheading>Logs</Subheading>
         <div className="flow-root">
           <ul role="list" className="-mb-8">
@@ -147,16 +130,10 @@ export default function Test() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div>
-                          <Strong>
-                            {message.role === "user"
-                              ? "TOOL RESULT"
-                              : message.role.toUpperCase()}
-                          </Strong>
+                          <Strong>{message.role.toUpperCase()}</Strong>
                         </div>
                         <div className="mt-2 text-sm text-gray-700 flex flex-col gap-y-1.5">
-                          {message.content.map((block, index) => (
-                            <OneBlock key={index} block={block} />
-                          ))}
+                          <MessageContent content={message.content} />
                         </div>
                       </div>
                     </>
