@@ -57,8 +57,8 @@ importers:
         specifier: ^1.10.0
         version: 1.10.0
       openai:
-        specifier: ^4.93.0
-        version: 4.95.1(ws@8.18.1)(zod@3.24.3)
+        specifier: ^4.98.0
+        version: 4.98.0(ws@8.18.1)(zod@3.24.3)
       playwright:
         specifier: ^1.52.0
         version: 1.52.0
@@ -2388,8 +2388,8 @@ packages:
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
 
-  openai@4.95.1:
-    resolution: {integrity: sha512-IqJy+ymeW+k/Wq+2YVN3693OQMMcODRtHEYOlz263MdUwnN/Dwdl9c2EXSxLLtGEHkSHAfvzpDMHI5MaWJKXjQ==}
+  openai@4.98.0:
+    resolution: {integrity: sha512-TmDKur1WjxxMPQAtLG5sgBSCJmX7ynTsGmewKzoDwl1fRxtbLOsiR0FA/AOAAtYUmP6azal+MYQuOENfdU+7yg==}
     hasBin: true
     peerDependencies:
       ws: ^8.18.0
@@ -5612,7 +5612,7 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  openai@4.95.1(ws@8.18.1)(zod@3.24.3):
+  openai@4.98.0(ws@8.18.1)(zod@3.24.3):
     dependencies:
       '@types/node': 18.19.86
       '@types/node-fetch': 2.6.12
