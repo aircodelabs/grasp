@@ -32,8 +32,8 @@ export interface TabInfo {
   url: string;
 }
 
-type MouseButton = "left" | "right" | "middle";
-type ScreenshotFormat = "base64" | "buffer";
+export type MouseButton = "left" | "right" | "middle";
+export type ScreenshotFormat = "base64" | "buffer";
 
 const CUA_KEY_TO_PLAYWRIGHT_KEY: Record<string, string> = {
   "/": "Divide",

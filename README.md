@@ -15,9 +15,7 @@ Some of the key features include:
 - **Human-like automation**. Grasp operates the browser just like a real human. You can even provide credentials for the agent to log in and retrieve personalized content.
 - **Natural language control**. No code needed — simply describe what you want in plain language, and the agent will handle the rest.
 
-
 https://github.com/user-attachments/assets/b55b5f76-4faa-45b9-a5ab-4c4295dfdf19
-
 
 ## Quick Start
 
@@ -26,11 +24,15 @@ https://github.com/user-attachments/assets/b55b5f76-4faa-45b9-a5ab-4c4295dfdf19
 
 Run the following commands to pull and start Grasp:
 
-```sh
-# Pull the image
-docker pull getgrasp/grasp
+- Pull the image
 
-# Run the container
+```sh
+docker pull getgrasp/grasp
+```
+
+- Run the container
+
+```sh
 docker run -d \
   --name grasp-agent \
   -p 3000:3000 \
@@ -42,9 +44,32 @@ Replace YOUR_ANTHROPIC_KEY with your actual [Anthropic API Key](https://console.
 
 Once the container is running, open [http://localhost:3000](http://localhost:3000) in your browser to access the Grasp console.
 
+## Using other providers
+
+You can use providers other than Anthropic.
+
+To use a different provider, copy the `.env.example` file to `.env` and set the corresponding environment variables. Then run Grasp using `.env` file:
+
+```sh
+docker run -d \
+  --name grasp-agent \
+  --env-file .env \
+  -p 3000:3000 \
+  getgrasp/grasp
+```
+
+The supported providers are:
+
+- Anthropic
+- OpenAI
+- Amazon Bedrock
+- Azure OpenAI
+
+Supporting more providers are working in progress. Free free to [file an issue](https://github.com/aircodelabs/grasp/issues) to request a new provider.
+
 ## Stay in the Loop
 
-Grasp is moving fast — we're shipping new features, expanding integrations, and refining the agent experience every week.  
+Grasp is moving fast — we're shipping new features, expanding integrations, and refining the agent experience every week.
 ⭐ Star the repo to stay updated and support the project!
 
 ## Tutorials
