@@ -101,8 +101,12 @@ export default function createTool(browser: Browser) {
       await sleep(2000);
       const image = await browser.screenshot();
 
+      const currentTab = await browser.currentTab();
+      const currentUrl = currentTab?.url ?? "";
+
       return {
         image,
+        text: currentUrl,
       };
     },
   };

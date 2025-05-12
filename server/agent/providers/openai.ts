@@ -3,7 +3,7 @@ import BasicAgent from "../basic.js";
 import type { Browser } from "../../browser/index.js";
 import createBrowserNavigateTool from "../tools/browser-navigate.js";
 import createOpenaiComputerTool from "../tools/openai-computer.js";
-import type { ToolExecutionResult } from "../../utils/types.js";
+import type { BasicMessage, ToolExecutionResult } from "../../utils/types.js";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { ZodObject } from "zod";
 
@@ -79,7 +79,157 @@ export default class OpenAIAgent extends BasicAgent {
   // @override
   protected async loop(): Promise<string> {
     const response = await this.generate();
-    this.input = [];
+    const output = response.output;
+
+    if (this.newMessageListener) {
+      const message: BasicMessage = {
+        role: "assistant",
+        content: [],
+      };
+
+      for (const item of output) {
+        if (item.type === "message") {
+          for (const part of item.content) {
+            if (part.type === "output_text") {
+              message.content.push({
+                type: "text",
+                text: part.text,
+              });
+            }
+          }
+        } else if (item.type === "computer_call") {
+          message.content.push({
+            type: "tool_call",
+            toolCallId: item.call_id,
+            toolName: "computer",
+            args: JSON.stringify(item.action),
+          });
+        } else if (item.type === "function_call") {
+          message.content.push({
+            type: "tool_call",
+            toolCallId: item.call_id,
+            toolName: item.name,
+            args: item.arguments,
+          });
+        }
+      }
+
+      this.newMessageListener(message);
+    }
+
+    const nextInput: OpenAI.Responses.ResponseInput = [];
+
+    for (const item of output) {
+      if (item.type === "computer_call") {
+        const {
+          call_id: callId,
+          action,
+          pending_safety_checks: pendingSafetyChecks,
+        } = item;
+
+        if (pendingSafetyChecks.length > 0) {
+          // TODO: handle pending safety checks
+        }
+
+        // TODO: Execute the action
+        const computerToolExecutor = this.toolsExecutors["computer"];
+        const { image } = await computerToolExecutor(action);
+
+        nextInput.push({
+          type: "computer_call_output",
+          call_id: callId,
+          output: {
+            type: "computer_screenshot",
+            image_url: `data:image/png;base64,${image}`,
+          },
+        });
+      } else if (item.type === "function_call") {
+        const { name, arguments: args, call_id: callId } = item;
+        const toolExecutor = this.toolsExecutors[name];
+        if (!toolExecutor) {
+          throw new Error(`Tool ${name} not found`);
+        }
+        const { text, image } = await toolExecutor(JSON.parse(args));
+
+        nextInput.push({
+          type: "function_call_output",
+          call_id: callId,
+          output: text ?? "",
+        });
+
+        if (image) {
+          // We use user role to send the image since openai function call does not support image output right now
+          nextInput.push({
+            type: "message",
+            role: "user",
+            content: [
+              {
+                type: "input_image",
+                image_url: `data:image/png;base64,${image}`,
+                detail: "auto",
+              },
+            ],
+          });
+        }
+      }
+    }
+
+    // If no tools were used, return the content
+    if (nextInput.length === 0) {
+      let result = output
+        .filter((item) => item.type === "message")
+        .map((item) =>
+          item.content
+            .filter((part) => part.type === "output_text")
+            .map((part) => part.text)
+            .join("\n")
+        )
+        .join("\n");
+      return result;
+    }
+
+    // Else, go to the next loop
+    // First, dispatch the tool results to the listener
+    if (this.newMessageListener) {
+      const message: BasicMessage = {
+        role: "tool",
+        content: [],
+      };
+
+      for (const item of nextInput) {
+        if (item.type === "computer_call_output") {
+          message.content.push({
+            type: "tool_result",
+            toolCallId: item.call_id,
+            content: [
+              {
+                type: "image",
+                dataType: "base64",
+                data: item.output.image_url ?? "",
+                mimeType: "image/png",
+              },
+            ],
+          });
+        } else if (item.type === "function_call_output") {
+          message.content.push({
+            type: "tool_result",
+            toolCallId: item.call_id,
+            content: [
+              {
+                type: "text",
+                text: item.output,
+              },
+            ],
+          });
+        }
+      }
+
+      this.newMessageListener(message);
+    }
+
+    this.previousResponse = response;
+    this.input = nextInput;
+    return this.loop();
   }
 
   protected async generate(): Promise<OpenAI.Responses.Response> {
