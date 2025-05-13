@@ -9,13 +9,15 @@
 
 Grasp is an open-source and self-hosted agentic browser. With built-in support for MCP and A2A support, it can seamlessly integrate with any other AI apps or agents.
 
+Here’s a quick example of how Grasp works seamlessly with Claude Desktop to make planning your next Airbnb trip:
+
+https://github.com/user-attachments/assets/b55b5f76-4faa-45b9-a5ab-4c4295dfdf19
+
 Some of the key features include:
 
 - **Isolated browser environment**. Grasp is dockerized, ensuring it never interferes with your local workspace. It can be easily hosted on your machine or in the cloud.
 - **Human-like automation**. Grasp operates the browser just like a real human. You can even provide credentials for the agent to log in and retrieve personalized content.
 - **Natural language control**. No code needed — simply describe what you want in plain language, and the agent will handle the rest.
-
-https://github.com/user-attachments/assets/b55b5f76-4faa-45b9-a5ab-4c4295dfdf19
 
 ## Quick Start
 
