@@ -15,7 +15,6 @@ export default class BedrockAgent extends AnthropicAgent {
 
   // @override
   protected async generate() {
-    console.log("Start generate");
     const response = await this.bedrockClient.beta.messages.create({
       model: this.bedrockModel,
       max_tokens: 8192,
@@ -25,7 +24,6 @@ export default class BedrockAgent extends AnthropicAgent {
       betas: ["computer-use-2025-01-24"],
       thinking: { type: "enabled", budget_tokens: 4096 },
     });
-    console.log("Generate done", response.content);
     return response as Anthropic.Beta.Messages.BetaMessage;
   }
 }

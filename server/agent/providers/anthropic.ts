@@ -242,12 +242,18 @@ export default class AnthropicAgent extends BasicAgent {
   }
 
   private filterLastResult() {
-    const lastToolMessage = this.messages.filter(
+    const toolMessages = this.messages.filter(
       (m) =>
         m.role === "user" &&
         typeof m.content !== "string" &&
         m.content.some((part) => part.type === "tool_result")
-    )[0];
+    );
+
+    if (toolMessages.length === 0) {
+      return;
+    }
+
+    const lastToolMessage = toolMessages[toolMessages.length - 1];
 
     if (lastToolMessage) {
       const content =
