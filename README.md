@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/aircodelabs-grasp-badge.png)](https://mseep.ai/app/aircodelabs-grasp)
+
 ![banner](https://github.com/user-attachments/assets/6314baa8-4b90-4b0d-ad85-0ef673e2ceca)
 
 <h1 align="center">Grasp</h1>
