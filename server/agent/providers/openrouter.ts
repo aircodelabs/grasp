@@ -8,7 +8,7 @@ import { ZodObject } from "zod";
 import zodToJsonSchema from "zod-to-json-schema";
 
 export default class OpenRouterAgent extends BasicAgent {
-  private openrouterModel: string = "anthropic/claude-3.7-sonnet:thinking";
+  private openrouterModel: string = "anthropic/claude-3.7-sonnet";
   private openrouterClient: AxiosInstance;
   protected tools: any[];
   protected toolsExecutors: Record<
@@ -153,7 +153,7 @@ export default class OpenRouterAgent extends BasicAgent {
 
         toolResultMessages.push({
           role: "tool",
-          toolCallId: toolCall.id,
+          tool_call_id: toolCall.id,
           name: toolName,
           content: resultContent,
         });
@@ -174,10 +174,10 @@ export default class OpenRouterAgent extends BasicAgent {
       const message: BasicMessage = {
         role: "tool",
         content: toolResultMessages.map(
-          ({ toolCallId, name, content }: any) => {
+          ({ tool_call_id, name, content }: any) => {
             return {
               type: "tool_result",
-              toolCallId,
+              toolCallId: tool_call_id,
               content: content.map((part: any) => {
                 if (part.type === "text") {
                   return {
@@ -220,7 +220,11 @@ export default class OpenRouterAgent extends BasicAgent {
       messages: this.messages,
       betas: ["computer-use-2025-01-24"],
     });
-    console.log("generated", response.data);
+    if (response.data.error) {
+      console.log("Error", response.data.error);
+    } else {
+      console.log("Generated", response.data.choices[0].message);
+    }
     return response.data;
   }
 
