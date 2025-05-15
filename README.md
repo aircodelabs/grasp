@@ -69,6 +69,13 @@ The supported providers are:
 
 Supporting more providers are working in progress. Free free to [file an issue](https://github.com/aircodelabs/grasp/issues) to request a new provider.
 
+**Notes for other providers:**
+
+*OPENAI*:
+
+
+- make sure your account supports [computer-use-preview](https://platform.openai.com/docs/guides/tools-computer-use)
+
 ## Stay in the Loop
 
 Grasp is moving fast — we're shipping new features, expanding integrations, and refining the agent experience every week.
