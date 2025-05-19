@@ -47,7 +47,9 @@ interface Log {
 
 export default function Test() {
   const [running, setRunning] = useState(false);
-  const [task, setTask] = useState("使用 Google 查询一下今天的天气");
+  const [task, setTask] = useState(
+    "在 GitHub 中为 https://github.com/aircodelabs/grasp 这个项目点一个 Star"
+  );
   const [logs, setLogs] = useState<Log[]>([]);
 
   useEffect(() => {

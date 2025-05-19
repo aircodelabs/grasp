@@ -17,7 +17,9 @@ The current date is ${new Date().toLocaleDateString("en-US", {
       month: "long",
       day: "numeric",
     })}.
-To reduce cost, previous screenshot images have been removed from the conversation. Only the recent screenshot is included.`;
+To reduce cost, previous screenshot images have been removed from the conversation. Only the recent screenshot is included.
+Most actions need to login first, so before taking action, try to think if the website need to login first.
+If the website need to login, DO NOT ask user to provide credentials or login manually, use fillin_credentials tool to fill in the username and password, this tool will get the credentials from the database. It's a safe and secure way.`;
   }
 
   setNewMessageListener(listener: (message: BasicMessage) => void) {

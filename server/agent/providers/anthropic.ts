@@ -3,6 +3,7 @@ import type { Browser } from "../../browser/index.js";
 import Anthropic from "@anthropic-ai/sdk";
 import createBrowserNavigateTool from "../tools/browser-navigate.js";
 import createAnthropicComputerTool from "../tools/anthropic-computer.js";
+import createFillinCredentialsTool from "../tools/fillin-credentials.js";
 import zodToJsonSchema from "zod-to-json-schema";
 import { ZodObject } from "zod";
 import type {
@@ -33,14 +34,7 @@ export default class AnthropicAgent extends BasicAgent {
     this.tools = [];
     this.toolsExecutors = {};
 
-    const browserNavigate = createBrowserNavigateTool(browser);
-    this.tools.push({
-      name: browserNavigate.name,
-      description: browserNavigate.description,
-      input_schema: this.getToolSchema(browserNavigate.parameters),
-    });
-    this.toolsExecutors[browserNavigate.name] = browserNavigate.execute;
-
+    // Computer use tool
     const computerTool = createAnthropicComputerTool(browser);
     this.tools.push({
       name: "computer",
@@ -49,6 +43,21 @@ export default class AnthropicAgent extends BasicAgent {
       display_height_px: computerTool.display_height_px,
     });
     this.toolsExecutors["computer"] = computerTool.execute;
+
+    // Standard tools
+    const toolCreators = [
+      createBrowserNavigateTool,
+      createFillinCredentialsTool,
+    ];
+    for (const toolCreator of toolCreators) {
+      const tool = toolCreator(browser);
+      this.tools.push({
+        name: tool.name,
+        description: tool.description,
+        input_schema: this.getToolSchema(tool.parameters),
+      });
+      this.toolsExecutors[tool.name] = tool.execute;
+    }
 
     this.messages = [];
   }
