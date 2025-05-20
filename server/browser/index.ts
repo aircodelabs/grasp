@@ -184,10 +184,7 @@ export class Browser {
       process.env.NODE_ENV === "production"
         ? "/app"
         : path.join(process.cwd(), ".grasp-local");
-    const userDataDir = path.join(
-      userDataBase,
-      process.env.PLAYWRIGHT_USER_DATA_DIR || "/browser-user-data"
-    );
+    const userDataDir = path.join(userDataBase, "/browser-user-data");
     await ensureDir(userDataDir);
 
     this.context = await playwright.chromium.launchPersistentContext(

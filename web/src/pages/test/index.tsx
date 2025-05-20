@@ -48,7 +48,7 @@ interface Log {
 export default function Test() {
   const [running, setRunning] = useState(false);
   const [task, setTask] = useState(
-    "在 GitHub 中为 https://github.com/aircodelabs/grasp 这个项目点一个 Star"
+    "Go to bing.com and search for 'react' and click the first result."
   );
   const [logs, setLogs] = useState<Log[]>([]);
 

@@ -69,6 +69,38 @@ The supported providers are:
 
 Supporting more providers are working in progress. Free free to [file an issue](https://github.com/aircodelabs/grasp/issues) to request a new provider.
 
+## Enable secure auto-login
+
+Grasp can automatically log in to websites for you. This makes it easier to retrieve personalized content or take actions on websites that require authentication. E.g. star a repo on GitHub, check in to a system, get your following list on X, etc.
+
+The action to input your credentials is performed locally, and your password will **NOT** be sent to any LLM, so it's secure and safe.
+
+To enable the auto-login:
+
+- Copy the `.credentials.example.yml` file to `.credentials.yml` and fill in your credentials for each website.
+
+```sh
+cp .credentials.example.yml .credentials.yml
+```
+
+- Create a `browser-user-data` directory to store the browser's user data. This will enable the persistent mode so you don't need to login again.
+
+```sh
+mkdir -p browser-user-data
+```
+
+- Run Grasp by mounting the `.credentials.yml` file and `browser-user-data` directory.
+
+```
+docker run -d \
+  --name grasp-agent \
+  --env-file .env \
+  -p 3000:3000 \
+  -v $(pwd)/.credentials.yml:/app/.credentials.yml \
+  -v $(pwd)/browser-user-data:/app/browser-user-data \
+  getgrasp/grasp
+```
+
 ## Stay in the Loop
 
 Grasp is moving fast — we're shipping new features, expanding integrations, and refining the agent experience every week.

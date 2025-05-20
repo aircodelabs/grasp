@@ -68,7 +68,7 @@ export default class OpenAIAgent extends BasicAgent {
       {
         role: "developer",
         content:
-          "Use the browser_navigate functions to navigate the browser. If you see nothing, try going to google.com.",
+          "Use the browser_navigate functions to navigate the browser. If you see nothing, try going to bing.com.",
       },
       {
         role: "user",
