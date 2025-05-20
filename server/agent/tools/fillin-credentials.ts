@@ -1,15 +1,26 @@
 import { z } from "zod";
 import type { Browser } from "../../browser/index.js";
 import type { ToolExecutionResult } from "../../utils/types.js";
+import path from "path";
+import fs from "fs";
+import yaml from "yaml";
 
-async function getUsernameByDomain(domain: string) {
-  // TODO: implement this
-  return "";
+const CREDENTIALS_BASE_PATH =
+  process.env.NODE_ENV === "production" ? "/app" : process.cwd();
+const CREDENTIALS_FILE = path.join(CREDENTIALS_BASE_PATH, ".credentials.yml");
+
+let credentialsDB: Record<string, Record<string, string>> = {};
+
+if (fs.existsSync(CREDENTIALS_FILE)) {
+  credentialsDB = yaml.parse(fs.readFileSync(CREDENTIALS_FILE, "utf8"));
 }
 
-async function getPasswordByDomainAndUsername(domain: string) {
-  // TODO: implement this
-  return "";
+async function getUsernameByDomain(domain: string) {
+  return credentialsDB[domain]?.username;
+}
+
+async function getPasswordByDomain(domain: string) {
+  return credentialsDB[domain]?.password;
 }
 
 export default function createTool(browser: Browser) {
@@ -29,22 +40,24 @@ export default function createTool(browser: Browser) {
       field: "username" | "password";
       username?: string;
     }): Promise<ToolExecutionResult> => {
-      console.log("fillin_credentials", url, field);
-
       let resultText = "username";
 
       const domain = new URL(url).hostname;
 
       if (field === "username") {
         const textToInput = await getUsernameByDomain(domain);
+
         if (!textToInput) {
-          throw new Error("No username found for domain: " + domain);
+          return {
+            text: `No username found for domain: ${domain}. It's maybe the user didn't provide this credential. Try to achieve the task without login.`,
+          };
         }
+
         await browser.type(textToInput);
         resultText =
           "Input username successfully, the username is: " + textToInput;
       } else if (field === "password") {
-        const textToInput = await getPasswordByDomainAndUsername(domain);
+        const textToInput = await getPasswordByDomain(domain);
         if (!textToInput) {
           throw new Error("No password found for domain: " + domain);
         }

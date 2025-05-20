@@ -182,7 +182,7 @@ export class Browser {
 
     const userDataBase =
       process.env.NODE_ENV === "production"
-        ? "/"
+        ? "/app"
         : path.join(process.cwd(), ".grasp-local");
     const userDataDir = path.join(
       userDataBase,

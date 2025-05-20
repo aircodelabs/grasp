@@ -3,6 +3,7 @@ import BasicAgent from "../basic.js";
 import type { Browser } from "../../browser/index.js";
 import createBrowserNavigateTool from "../tools/browser-navigate.js";
 import createOpenaiComputerTool from "../tools/openai-computer.js";
+import createFillinCredentialsTool from "../tools/fillin-credentials.js";
 import type { BasicMessage, ToolExecutionResult } from "../../utils/types.js";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { ZodObject } from "zod";
@@ -27,16 +28,7 @@ export default class OpenAIAgent extends BasicAgent {
     this.tools = [];
     this.toolsExecutors = {};
 
-    const browserNavigate = createBrowserNavigateTool(browser);
-    this.tools.push({
-      type: "function",
-      name: browserNavigate.name,
-      description: browserNavigate.description,
-      strict: true,
-      parameters: this.getToolSchema(browserNavigate.parameters),
-    });
-    this.toolsExecutors[browserNavigate.name] = browserNavigate.execute;
-
+    // Computer use tool
     const computerTool = createOpenaiComputerTool(browser);
     this.tools.push({
       type: "computer_use_preview" as "computer-preview",
@@ -45,6 +37,23 @@ export default class OpenAIAgent extends BasicAgent {
       environment: "browser",
     });
     this.toolsExecutors["computer"] = computerTool.execute;
+
+    // Standard tools
+    const toolCreators = [
+      createBrowserNavigateTool,
+      createFillinCredentialsTool,
+    ];
+    for (const toolCreator of toolCreators) {
+      const tool = toolCreator(browser);
+      this.tools.push({
+        type: "function",
+        name: tool.name,
+        description: tool.description,
+        strict: true,
+        parameters: this.getToolSchema(tool.parameters),
+      });
+      this.toolsExecutors[tool.name] = tool.execute;
+    }
 
     this.input = [];
   }
