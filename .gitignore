@@ -15,6 +15,7 @@ dist-ssr
 *.local
 .env
 .grasp-local
+.credentials.yml
 
 # Editor directories and files
 .vscode/*
