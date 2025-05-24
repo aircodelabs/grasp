@@ -28,7 +28,7 @@ export default class AnthropicAgent extends BasicAgent {
 
   constructor(browser: Browser) {
     super(browser);
-    this.anthropicModel = "claude-3-7-sonnet-20250219";
+    this.anthropicModel = "claude-sonnet-4-20250514";
     this.anthropicClient = new Anthropic();
 
     this.tools = [];
